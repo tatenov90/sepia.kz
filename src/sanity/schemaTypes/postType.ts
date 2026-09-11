@@ -35,9 +35,9 @@ export const postType = defineType({
     }),
     defineField({
       name: 'excerpt',
-      title: 'Excerpt',
+      title: 'Excerpt / Short Description (For SEO & Social Media)',
       type: 'text',
-      description: 'A short summary of the post for SEO and social media sharing (Open Graph).',
+      description: 'A short summary of the post used for search engine snippets and Open Graph cards.',
       validation: (Rule) => Rule.max(200),
     }),
     defineField({
