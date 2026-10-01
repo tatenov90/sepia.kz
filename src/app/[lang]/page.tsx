@@ -176,7 +176,7 @@ export default async function Page({
       </section>
 
       {/* ── Stage 4: Massive Omanko Style Cards ── */}
-      <section className="max-w-7xl mx-auto w-[95%] mt-16 mb-24 px-4">
+      <section className="max-w-7xl mx-auto w-[95%] mt-16 mb-8 md:mb-12 px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
           {/* ── Left Card ── */}
