@@ -16,3 +16,34 @@ export const postBySlugQuery = groq`*[_type == "post" && slug.current == $slug][
   mainImage,
   body
 }`;
+
+export const HOME_PAGE_QUERY = groq`*[_type == "homePage"][0] {
+  heroPost->{
+    title,
+    slug,
+    mainImage,
+    excerpt,
+    category->{title, slug}
+  },
+  carouselPosts[]->{
+    title,
+    slug,
+    mainImage,
+    excerpt,
+    category->{title, slug}
+  },
+  subHeroPosts[]->{
+    title,
+    slug,
+    mainImage,
+    excerpt,
+    category->{title, slug}
+  },
+  editorialPosts[]->{
+    title,
+    slug,
+    mainImage,
+    excerpt,
+    category->{title, slug}
+  }
+}`;

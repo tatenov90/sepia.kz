@@ -41,6 +41,12 @@ export const postType = defineType({
       validation: (Rule) => Rule.max(200),
     }),
     defineField({
+      name: 'category',
+      title: 'Category',
+      type: 'reference',
+      to: [{ type: 'category' }],
+    }),
+    defineField({
       name: 'body',
       title: 'Body',
       type: 'array',

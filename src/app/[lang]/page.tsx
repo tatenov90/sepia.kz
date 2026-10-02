@@ -5,7 +5,7 @@ import type { SanityImageSource } from "@sanity/image-url";
 import { getDictionary } from "lib/dictionary";
 import type { Locale } from "lib/dictionary";
 import { client } from "@/sanity/client";
-import { postsQuery } from "@/sanity/queries";
+import { HOME_PAGE_QUERY } from "@/sanity/queries";
 import { urlForImage } from "@/sanity/lib/image";
 
 // ── ISR: revalidate every 60 seconds ─────────────────────────────────────────
@@ -13,12 +13,18 @@ export const revalidate = 60;
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface SanityPost {
-  _id: string;
   title: string;
   slug: { current: string };
   excerpt: string | null;
-  publishedAt: string;
   mainImage: (SanityImageSource & { alt?: string }) | null;
+  category: { title: string; slug: { current: string } } | null;
+}
+
+interface HomePageData {
+  heroPost: SanityPost | null;
+  carouselPosts: SanityPost[] | null;
+  subHeroPosts: SanityPost[] | null;
+  editorialPosts?: SanityPost[];
 }
 
 // ── Image URL helper ──────────────────────────────────────────────────────────
@@ -39,16 +45,17 @@ export default async function Page({
   const { lang } = await params;
   await getDictionary(lang);
 
-  const posts: SanityPost[] = await client.fetch(postsQuery);
+  const data: HomePageData | null = await client.fetch(HOME_PAGE_QUERY);
 
-  // Slot aliases – may be undefined when fewer posts exist
-  const heroPost    = posts[0];
-  const sidePost1   = posts[1];
-  const sidePost2   = posts[2];
-  const sidePost3   = posts[3];
-  const carouselPosts = posts.slice(4, 8);
-  const massiveLeft  = posts[8];
-  const massiveRight = posts[9];
+  // ── Slot aliases from singleton – all optional-chained for safety ──────────
+  const heroPost      = data?.heroPost ?? null;
+  const sidePosts     = data?.subHeroPosts ?? [];
+  const sidePost1     = sidePosts[0] ?? null;
+  const sidePost2     = sidePosts[1] ?? null;
+  const sidePost3     = sidePosts[2] ?? null;
+  const carouselPosts = data?.carouselPosts ?? [];
+  const massiveLeft   = data?.editorialPosts?.[0] ?? null;
+  const massiveRight  = data?.editorialPosts?.[1] ?? null;
 
   return (
     <main>
@@ -99,7 +106,7 @@ export default async function Page({
             {[sidePost1, sidePost2, sidePost3].map((post, index) =>
               post ? (
                 <Link
-                  key={post._id}
+                  key={post?.slug?.current ?? `side-${index}`}
                   href={`/${lang}/post/${post?.slug?.current || ""}`}
                   className="flex flex-row gap-4 group cursor-pointer"
                 >
@@ -144,25 +151,27 @@ export default async function Page({
       <section className="max-w-7xl mx-auto w-[95%] mt-16">
         <div className="flex flex-row gap-6 overflow-x-auto snap-x snap-mandatory pb-8 pr-8 px-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {carouselPosts.length > 0
-            ? carouselPosts.map((post) => (
+            ? carouselPosts.map((post, index) => (
                 <Link
-                  key={post._id}
+                  key={post?.slug?.current ?? `carousel-${index}`}
                   href={`/${lang}/post/${post?.slug?.current || ""}`}
                   className="flex flex-col gap-3 min-w-[260px] md:min-w-[300px] snap-start cursor-pointer group shrink-0"
                 >
                   <div className="w-full aspect-[4/5] rounded-md overflow-hidden bg-[#8B1A1A] relative">
-                    {getImageUrl(post.mainImage, 300, 375) && (
+                    {getImageUrl(post?.mainImage, 300, 375) && (
                       <Image
-                        src={getImageUrl(post.mainImage, 300, 375)!}
-                        alt={post.mainImage?.alt ?? post.title}
+                        src={getImageUrl(post?.mainImage, 300, 375)!}
+                        alt={post?.mainImage?.alt ?? post?.title}
                         fill
                         className="object-cover"
                         sizes="300px"
                       />
                     )}
                   </div>
-                  <p className="text-sm font-semibold text-muted-foreground uppercase">Category Category&apos;s name</p>
-                  <h4 className="text-lg font-bold font-sans leading-tight">{post.title}</h4>
+                  <p className="text-sm font-semibold text-muted-foreground uppercase">
+                    {post?.category?.title ?? ""}
+                  </p>
+                  <h4 className="text-lg font-bold font-sans leading-tight">{post?.title}</h4>
                 </Link>
               ))
             : [0, 1, 2, 3].map((i) => (
@@ -196,8 +205,10 @@ export default async function Page({
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
               <div className="absolute bottom-10 left-8 right-8 flex flex-col gap-2">
-                <p className="text-xs font-bold tracking-[0.2em] uppercase text-white/90">MARKETING</p>
-                <h3 className="text-3xl md:text-4xl font-bold text-white leading-tight">{massiveLeft.title}</h3>
+                <p className="text-xs font-bold tracking-[0.2em] uppercase text-white/90">
+                  {massiveLeft?.category?.title ?? ""}
+                </p>
+                <h3 className="text-3xl md:text-4xl font-bold text-white leading-tight">{massiveLeft?.title}</h3>
               </div>
             </Link>
           ) : (
@@ -215,10 +226,10 @@ export default async function Page({
               href={`/${lang}/post/${massiveRight?.slug?.current || ""}`}
               className="relative overflow-hidden rounded-3xl aspect-[4/5] bg-[#8B1A1A] group cursor-pointer block"
             >
-              {getImageUrl(massiveRight.mainImage, 800, 1000) && (
+              {getImageUrl(massiveRight?.mainImage, 800, 1000) && (
                 <Image
-                  src={getImageUrl(massiveRight.mainImage, 800, 1000)!}
-                  alt={massiveRight.mainImage?.alt ?? massiveRight.title}
+                  src={getImageUrl(massiveRight?.mainImage, 800, 1000)!}
+                  alt={massiveRight?.mainImage?.alt ?? massiveRight?.title}
                   fill
                   className="object-cover"
                   sizes="(max-width: 768px) 100vw, 50vw"
@@ -226,8 +237,10 @@ export default async function Page({
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
               <div className="absolute bottom-10 left-8 right-8 flex flex-col gap-2">
-                <p className="text-xs font-bold tracking-[0.2em] uppercase text-white/90">MARKETING</p>
-                <h3 className="text-3xl md:text-4xl font-bold text-white leading-tight">{massiveRight.title}</h3>
+                <p className="text-xs font-bold tracking-[0.2em] uppercase text-white/90">
+                  {massiveRight?.category?.title ?? ""}
+                </p>
+                <h3 className="text-3xl md:text-4xl font-bold text-white leading-tight">{massiveRight?.title}</h3>
               </div>
             </Link>
           ) : (
