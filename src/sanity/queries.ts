@@ -17,6 +17,16 @@ export const postBySlugQuery = groq`*[_type == "post" && slug.current == $slug][
   body
 }`;
 
+export const MAQALALAR_PAGE_QUERY = groq`*[_type == "post" && defined(slug.current)] | order(publishedAt desc) {
+  _id,
+  title,
+  slug,
+  excerpt,
+  publishedAt,
+  mainImage,
+  category->{title}
+}`;
+
 export const HOME_PAGE_QUERY = groq`*[_type == "homePage"][0] {
   heroPost->{
     title,
