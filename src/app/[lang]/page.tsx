@@ -60,7 +60,7 @@ export default async function Page({
   return (
     <main>
       {/* ── Hero Section ── */}
-      <section className="max-w-7xl mx-auto px-4 w-[95%] mt-16">
+      <section className="max-w-7xl mx-auto px-4 w-[95%] mt-6 md:mt-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
           {/* ── Left Column: Giant Feature Card ── */}
@@ -69,7 +69,7 @@ export default async function Page({
               href={`/${lang}/post/${heroPost?.slug?.current || ""}`}
               className="lg:col-span-7 flex flex-col gap-4 group cursor-pointer"
             >
-              <div className="aspect-video w-full rounded-md overflow-hidden bg-[#8B1A1A] relative">
+              <div className="relative w-full aspect-video md:aspect-[16/9] overflow-hidden rounded-xl">
                 {getImageUrl(heroPost.mainImage, 900, 506) && (
                   <Image
                     src={getImageUrl(heroPost.mainImage, 900, 506)!}
@@ -81,23 +81,27 @@ export default async function Page({
                   />
                 )}
               </div>
-              <h2 className="text-3xl lg:text-4xl font-bold font-sans tracking-tight leading-tight">
-                {heroPost.title}
-              </h2>
-              <p className="text-muted-foreground mt-2 line-clamp-2">
-                {heroPost.excerpt}
-              </p>
+              <div className="flex flex-col gap-2 mt-3">
+                <h2 className="text-xl md:text-4xl font-bold font-sans tracking-tight leading-tight">
+                  {heroPost.title}
+                </h2>
+                <p className="text-muted-foreground line-clamp-2">
+                  {heroPost.excerpt}
+                </p>
+              </div>
             </Link>
           ) : (
             <article className="lg:col-span-7 flex flex-col gap-4 group cursor-pointer">
-              <div className="aspect-video w-full rounded-md overflow-hidden bg-[#8B1A1A]" />
-              <h2 className="text-3xl lg:text-4xl font-bold font-sans tracking-tight leading-tight">
-                Long Topic of the News
-              </h2>
-              <p className="text-muted-foreground mt-2 line-clamp-2">
-                Short Preview adopted for SEO. Short Preview adopted for SEO.
-                Short Preview adopted for SEO. Short Preview adopted for SEO.
-              </p>
+              <div className="relative w-full aspect-video md:aspect-[16/9] overflow-hidden rounded-xl bg-[#8B1A1A]" />
+              <div className="flex flex-col gap-2 mt-3">
+                <h2 className="text-xl md:text-4xl font-bold font-sans tracking-tight leading-tight">
+                  Long Topic of the News
+                </h2>
+                <p className="text-muted-foreground line-clamp-2">
+                  Short Preview adopted for SEO. Short Preview adopted for SEO.
+                  Short Preview adopted for SEO. Short Preview adopted for SEO.
+                </p>
+              </div>
             </article>
           )}
 
@@ -108,9 +112,9 @@ export default async function Page({
                 <Link
                   key={post?.slug?.current ?? `side-${index}`}
                   href={`/${lang}/post/${post?.slug?.current || ""}`}
-                  className="flex flex-row gap-4 group cursor-pointer"
+                  className="flex flex-row items-start gap-4 group cursor-pointer"
                 >
-                  <div className="w-2/5 shrink-0 aspect-[4/3] rounded-md overflow-hidden bg-[#8B1A1A] relative">
+                  <div className="relative shrink-0 w-28 md:w-32 aspect-square overflow-hidden rounded-xl">
                     {getImageUrl(post.mainImage, 320, 240) && (
                       <Image
                         src={getImageUrl(post.mainImage, 320, 240)!}
@@ -122,20 +126,20 @@ export default async function Page({
                     )}
                   </div>
                   <div className="flex flex-col gap-1">
-                    <h3 className="text-lg font-bold font-sans leading-tight">
+                    <h3 className="text-sm md:text-base font-bold font-sans leading-tight">
                       {post.title}
                     </h3>
-                    <p className="text-sm text-muted-foreground line-clamp-2">
+                    <p className="hidden md:block md:line-clamp-4 text-muted-foreground">
                       {post.excerpt}
                     </p>
                   </div>
                 </Link>
               ) : (
-                <div key={`ph-side-${index}`} className="flex flex-row gap-4 group cursor-pointer">
-                  <div className="w-2/5 shrink-0 aspect-[4/3] rounded-md overflow-hidden bg-[#8B1A1A]" />
+                <div key={`ph-side-${index}`} className="flex flex-row items-start gap-4 group cursor-pointer">
+                  <div className="relative shrink-0 w-28 md:w-32 aspect-square overflow-hidden rounded-xl bg-[#8B1A1A]" />
                   <div className="flex flex-col gap-1">
-                    <h3 className="text-lg font-bold font-sans leading-tight">Short Topic of the News</h3>
-                    <p className="text-sm text-muted-foreground line-clamp-2">
+                    <h3 className="text-sm md:text-base font-bold font-sans leading-tight">Short Topic of the News</h3>
+                    <p className="hidden md:block md:line-clamp-4 text-muted-foreground">
                       Short Preview adopted for SEO. Short Preview adopted for SEO. Short Preview adopted for SEO.
                     </p>
                   </div>
@@ -155,9 +159,9 @@ export default async function Page({
                 <Link
                   key={post?.slug?.current ?? `carousel-${index}`}
                   href={`/${lang}/post/${post?.slug?.current || ""}`}
-                  className="flex flex-col gap-3 min-w-[260px] md:min-w-[300px] snap-start cursor-pointer group shrink-0"
+                  className="flex flex-col gap-3 w-[85vw] md:w-[300px] snap-start cursor-pointer group shrink-0"
                 >
-                  <div className="w-full aspect-[4/5] rounded-md overflow-hidden bg-[#8B1A1A] relative">
+                  <div className="relative w-full aspect-[4/5] overflow-hidden rounded-2xl bg-[#8B1A1A]">
                     {getImageUrl(post?.mainImage, 300, 375) && (
                       <Image
                         src={getImageUrl(post?.mainImage, 300, 375)!}
@@ -175,8 +179,8 @@ export default async function Page({
                 </Link>
               ))
             : [0, 1, 2, 3].map((i) => (
-                <div key={i} className="flex flex-col gap-3 min-w-[260px] md:min-w-[300px] snap-start cursor-pointer group shrink-0">
-                  <div className="w-full aspect-[4/5] rounded-md overflow-hidden bg-[#8B1A1A]" />
+                <div key={i} className="flex flex-col gap-3 w-[85vw] md:w-[300px] snap-start cursor-pointer group shrink-0">
+                  <div className="relative w-full aspect-[4/5] overflow-hidden rounded-2xl bg-[#8B1A1A]" />
                   <p className="text-sm font-semibold text-muted-foreground uppercase">Category Category&apos;s name</p>
                   <h4 className="text-lg font-bold font-sans leading-tight">Topic of the News</h4>
                 </div>
