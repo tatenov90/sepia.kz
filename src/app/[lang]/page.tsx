@@ -16,6 +16,7 @@ interface SanityPost {
   title: string;
   slug: { current: string };
   excerpt: string | null;
+  publishedAt: string | null;
   mainImage: (SanityImageSource & { alt?: string }) | null;
   category: { title: string; slug: { current: string } } | null;
 }
@@ -112,9 +113,9 @@ export default async function Page({
                 <Link
                   key={post?.slug?.current ?? `side-${index}`}
                   href={`/${lang}/post/${post?.slug?.current || ""}`}
-                  className="flex flex-row items-start gap-4 group cursor-pointer"
+                  className="flex flex-row items-stretch gap-4 group cursor-pointer"
                 >
-                  <div className="relative shrink-0 w-28 md:w-32 aspect-square overflow-hidden rounded-xl">
+                  <div className="relative shrink-0 w-28 md:w-32 aspect-[4/3] md:aspect-square overflow-hidden rounded-xl">
                     {getImageUrl(post.mainImage, 320, 240) && (
                       <Image
                         src={getImageUrl(post.mainImage, 320, 240)!}
@@ -125,23 +126,33 @@ export default async function Page({
                       />
                     )}
                   </div>
-                  <div className="flex flex-col gap-1">
-                    <h3 className="text-sm md:text-base font-bold font-sans leading-tight">
+                  <div className="flex flex-col h-full gap-1">
+                    <h3 className="text-base md:text-base font-bold font-sans leading-tight">
                       {post.title}
                     </h3>
                     <p className="hidden md:block md:line-clamp-4 text-muted-foreground">
                       {post.excerpt}
                     </p>
+                    <div className="mt-auto text-[10px] md:text-[11px] text-muted-foreground uppercase flex flex-wrap gap-1.5 md:gap-2 items-center leading-none">
+                      <span>{post?.category?.title}</span>
+                      <span className="text-[8px]">•</span>
+                      <span>{post?.publishedAt ? new Date(post.publishedAt).toLocaleDateString('kk-KZ') : ''}</span>
+                    </div>
                   </div>
                 </Link>
               ) : (
-                <div key={`ph-side-${index}`} className="flex flex-row items-start gap-4 group cursor-pointer">
-                  <div className="relative shrink-0 w-28 md:w-32 aspect-square overflow-hidden rounded-xl bg-[#8B1A1A]" />
-                  <div className="flex flex-col gap-1">
-                    <h3 className="text-sm md:text-base font-bold font-sans leading-tight">Short Topic of the News</h3>
+                <div key={`ph-side-${index}`} className="flex flex-row items-stretch gap-4 group cursor-pointer">
+                  <div className="relative shrink-0 w-28 md:w-32 aspect-[4/3] md:aspect-square overflow-hidden rounded-xl bg-[#8B1A1A]" />
+                  <div className="flex flex-col h-full gap-1">
+                    <h3 className="text-base md:text-base font-bold font-sans leading-tight">Short Topic of the News</h3>
                     <p className="hidden md:block md:line-clamp-4 text-muted-foreground">
                       Short Preview adopted for SEO. Short Preview adopted for SEO. Short Preview adopted for SEO.
                     </p>
+                    <div className="mt-auto flex flex-wrap gap-1.5 md:gap-2 items-center leading-none">
+                      <div className="h-2 w-16 rounded bg-muted" />
+                      <span className="text-[8px] text-muted-foreground">•</span>
+                      <div className="h-2 w-14 rounded bg-muted" />
+                    </div>
                   </div>
                 </div>
               )

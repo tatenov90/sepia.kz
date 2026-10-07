@@ -47,6 +47,7 @@ export const HOME_PAGE_QUERY = groq`*[_type == "homePage"][0] {
     slug,
     mainImage,
     excerpt,
+    publishedAt,
     category->{title, slug}
   },
   editorialPosts[]->{
